@@ -1,0 +1,21 @@
+services:
+    astro_api:
+        image: astro_api
+        build:
+            # context: ./astro_api
+            dockerfile: Dockerfile
+        container_name: astro_charts_api
+        ports:
+            - '${ASTRO_API_PORT:-3000}:3000'
+        networks:
+            - sail
+networks:
+    sail:
+        driver: bridge
+volumes:
+    sail-mysql:
+        driver: local
+    sail-redis:
+        driver: local
+    sail-meilisearch:
+        driver: local

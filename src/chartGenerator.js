@@ -25,7 +25,7 @@ function generateChartSVG(dataRadix, dataTransits = null, settings = null) {
   // Path is relative to this utility file
   const astrochartPath = path.resolve(
     __dirname,
-    "../../astrochart/dist/astrochart.js",
+    "../astrochart/dist/astrochart.js",
   );
   const astrochart = require(astrochartPath);
 

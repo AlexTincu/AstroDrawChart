@@ -1,11 +1,9 @@
 const express = require("express");
-// const NatalCalculator = require('./natal');
 const TransitCalculator = require("./transit");
 const AstrologicalCalculator = require("./natalWithTranzits");
-const SynastryCalculator = require("./synastry");
 const ProgressiveCalculator = require("./progressive"); // Import the progressive calculator
-const { generateChartSVG } = require("./utils/chartGenerator");
-const { toAstrochart } = require("./utils/astroUtils");
+const { generateChartSVG } = require("./chartGenerator");
+const { toAstrochart } = require("./astroUtils");
 
 const cors = require("cors");
 
@@ -121,6 +119,8 @@ app.post("/natal", (req, res) => {
         };
       }
 
+      console.log("dataRadix", dataRadix);
+      console.log("dataTransits", dataTransits);
       svg = generateChartSVG(dataRadix, dataTransits);
     } catch (svgErr) {
       console.error("Failed to generate SVG:", svgErr);

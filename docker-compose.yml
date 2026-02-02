@@ -1,29 +1,29 @@
 services:
-  # astro_api:
-  #   image: astro_api
-  #   build:
-  #     # context: ./astro_api
-  #     dockerfile: Dockerfile
-  #   container_name: astro_charts_api
-  #   ports:
-  #     - "${ASTRO_API_PORT:-3000}:3000"
-  #   volumes:
-  #     - .:/usr/src/app
-  #     - ../dist:/usr/src/app/dist
-  #     - /usr/src/app/node_modules
-  #   command: npm run dev
-  #   networks:
-  #     - sail
-  astro_compiler:
-    image: node:20-slim
-    container_name: astro_charts_compiler
-    working_dir: /usr/src/app
+  astro_api:
+    image: astro_api
+    build:
+      # context: ./astro_api
+      dockerfile: Dockerfile
+    container_name: astro_charts_api
+    ports:
+      - "${ASTRO_API_PORT:-3000}:3000"
     volumes:
-      - ..:/usr/src/app
+      - .:/usr/src/app
+      - ../dist:/usr/src/app/dist
       - /usr/src/app/node_modules
-    command: sh -c "npm install && npm run build:w"
+    command: npm run dev
     networks:
       - sail
+  # astro_compiler:
+  #   image: node:20-slim
+  #   container_name: astro_charts_compiler
+  #   working_dir: /usr/src/app
+  #   volumes:
+  #     - ..:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   command: sh -c "npm install && npm run build:w"
+  #   networks:
+  #     - sail
 networks:
   sail:
     driver: bridge

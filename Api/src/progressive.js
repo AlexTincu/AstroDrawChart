@@ -7,7 +7,7 @@ const DateTimeUtils = require("./DateTimeUtils");
  */
 
 class ProgressiveCalculator {
-    constructor(houseSystem="P") {
+    constructor(houseSystem = "P") {
         // Initialize Swiss Ephemeris
         swisseph.swe_set_ephe_path('./ephemeris');
 
@@ -44,16 +44,16 @@ class ProgressiveCalculator {
             MERCURY: 'secondary',
             VENUS: 'secondary',
             MARS: 'secondary',
-            
+
             // Social planets can use slower progression or remain static
             JUPITER: 'secondary', // Often kept natal
             SATURN: 'secondary',  // Often kept natal
-            
+
             // Outer planets typically remain at natal positions
             URANUS: 'secondary',
             NEPTUNE: 'secondary',
             PLUTO: 'secondary',
-            
+
             // Points and asteroids
             NORTH_NODE: 'secondary',
             CHIRON: 'secondary',
@@ -88,7 +88,7 @@ class ProgressiveCalculator {
         const month = date.getMonth() + 1;
         const day = date.getDate();
         const hour = date.getHours() + date.getMinutes() / 60 + date.getSeconds() / 3600;
-        
+
         return swisseph.swe_julday(year, month, day, hour, swisseph.SE_GREG_CAL);
     }
 
@@ -102,7 +102,7 @@ class ProgressiveCalculator {
         // Secondary progression: 1 day = 1 year
         const progressedDate = new Date(birthDate);
         progressedDate.setDate(progressedDate.getDate() + ageInYears);
-        
+
         return progressedDate;
     }
 
@@ -131,10 +131,10 @@ class ProgressiveCalculator {
 
         for (const [planetName, planetId] of Object.entries(this.planets)) {
             const progressionMethod = this.progressionMethods[planetName] || 'secondary';
-            
+
             try {
                 let planetData;
-                
+
                 if (progressionMethod === 'static') {
                     // Keep natal position for slow-moving planets
                     planetData = { ...natalPositions[planetName] };
@@ -142,7 +142,7 @@ class ProgressiveCalculator {
                 } else {
                     // Calculate progressed position using secondary progression
                     const result = swisseph.swe_calc_ut(julianDay, planetId, flags);
-                    
+
                     if (result.rflag >= 0) {
                         planetData = {
                             longitude: result.longitude,
@@ -192,14 +192,14 @@ class ProgressiveCalculator {
      */
     calculateProgressedMovement(natalLongitude, progressedLongitude) {
         let movement = progressedLongitude - natalLongitude;
-        
+
         // Handle 360° boundary crossing
         if (movement > 180) movement -= 360;
         if (movement < -180) movement += 360;
-        
+
         const signs = Math.floor(Math.abs(movement) / 30);
         const degrees = Math.abs(movement) % 30;
-        
+
         return {
             totalDegrees: movement,
             signs: signs,
@@ -220,11 +220,11 @@ class ProgressiveCalculator {
         const degrees = absMovement % 30;
         const deg = Math.floor(degrees);
         const min = Math.floor((degrees - deg) * 60);
-        
+
         let result = '';
         if (signs > 0) result += `${signs} sign${signs > 1 ? 's' : ''} `;
         result += `${deg}°${min}'`;
-        
+
         return `${movement >= 0 ? '+' : '-'}${result}`;
     }
 
@@ -240,26 +240,26 @@ class ProgressiveCalculator {
      */
     calculateProgressedHouses(birthDate, progressedDate, targetDate, latitude, longitude, method = 'secondary') {
         let houseJulianDay;
-        
+
         switch (method) {
             case 'solar_arc':
                 // Calculate solar arc progression
                 const natalSunJD = this.dateToJulianDay(birthDate);
                 const progressedSunJD = this.dateToJulianDay(progressedDate);
-                
+
                 const natalSun = swisseph.swe_calc_ut(natalSunJD, swisseph.SE_SUN, swisseph.SEFLG_SWIEPH);
                 const progressedSun = swisseph.swe_calc_ut(progressedSunJD, swisseph.SE_SUN, swisseph.SEFLG_SWIEPH);
-                
+
                 const solarArc = progressedSun.longitude - natalSun.longitude;
                 // For houses, we typically use the birth time with solar arc adjustment
                 houseJulianDay = this.dateToJulianDay(birthDate);
                 break;
-                
+
             case 'secondary':
                 // Use progressed date for houses (mean time progression)
                 houseJulianDay = this.dateToJulianDay(progressedDate);
                 break;
-                
+
             case 'natal':
             default:
                 // Keep natal houses
@@ -318,14 +318,14 @@ class ProgressiveCalculator {
         if (normalizedLong < 0) normalizedLong += 360;
 
         const cusps = houseCusps.map(house => house.cusp);
-        
+
         for (let i = 0; i < 12; i++) {
             const currentCusp = cusps[i];
             const nextCusp = cusps[(i + 1) % 12];
-            
+
             let houseStart = currentCusp;
             let houseEnd = nextCusp;
-            
+
             if (houseEnd < houseStart) {
                 if (normalizedLong >= houseStart || normalizedLong < houseEnd) {
                     return {
@@ -344,7 +344,7 @@ class ProgressiveCalculator {
                 }
             }
         }
-        
+
         return {
             number: 1,
             cuspDegree: this.formatDegree(cusps[0]),
@@ -360,16 +360,16 @@ class ProgressiveCalculator {
      */
     calculateProgressedAspects(progressedPositions, natalPositions) {
         const aspects = [];
-        
+
         // Progressed to Natal aspects
         for (const [progressedPlanet, progressedPos] of Object.entries(progressedPositions)) {
             for (const [natalPlanet, natalPos] of Object.entries(natalPositions)) {
                 // Skip if same planet (except for progressed planet to natal angles)
-                if (progressedPlanet === natalPlanet && 
+                if (progressedPlanet === natalPlanet &&
                     !['ASCENDANT', 'MIDHEAVEN', 'DESCENDANT', 'IMUM_COELI'].includes(natalPlanet)) {
                     continue;
                 }
-                
+
                 const angle = this.calculateAngleBetweenPlanets(
                     progressedPos.longitude,
                     natalPos.longitude
@@ -456,9 +456,9 @@ class ProgressiveCalculator {
         if (!progressedPositions.NORTH_NODE) {
             return null;
         }
-        
+
         const southNodeLongitude = (progressedPositions.NORTH_NODE.longitude + 180) % 360;
-        
+
         return {
             longitude: southNodeLongitude,
             latitude: -progressedPositions.NORTH_NODE.latitude,
@@ -481,11 +481,11 @@ class ProgressiveCalculator {
      * @returns {Object} Complete progressed chart
      */
     generateProgressedChart(birthData, natalPlanets, targetDate = new Date(), houseMethod = 'secondary') {
-        const { date:birthDate, latitude, longitude } = birthData;
+        const { date: birthDate, latitude, longitude } = birthData;
         const age = this.calculateAge(birthDate, targetDate);
         const progressedDate = this.calculateProgressedDate(birthDate, age);
         const progressedJulianDay = this.dateToJulianDay(progressedDate);
-        
+
         // Calculate progressed houses
         const progressedHouses = this.calculateProgressedHouses(
             birthDate,
@@ -516,10 +516,10 @@ class ProgressiveCalculator {
         const progressedAspects = this.calculateProgressedAspects(progressedPositions, natalPlanets);
 
         return {
-            chart:{
-                positions:progressedPositions,
+            chart: {
+                planets: progressedPositions,
                 ...progressedHouses,
-                aspects:progressedAspects,
+                aspects: progressedAspects,
             },
             meta: {
                 birthDate: birthDate.toISOString(),
@@ -544,14 +544,14 @@ class ProgressiveCalculator {
      */
     getMajorProgressedAspects(aspects, maxOrb = 0.5) {
         const majorAspects = ['Conjunction', 'Opposition', 'Trine', 'Square', 'Sextile'];
-        
+
         return aspects.filter(aspect => {
             const isMajorAspect = majorAspects.includes(aspect.aspect);
             const isWithinOrb = aspect.orb <= maxOrb;
-            const isSignificant = aspect.type === 'progressed-to-natal' || 
-                                (aspect.type === 'progressed-to-progressed' && 
-                                 ['SUN', 'MOON', 'MERCURY', 'VENUS', 'MARS'].includes(aspect.progressedPlanet));
-            
+            const isSignificant = aspect.type === 'progressed-to-natal' ||
+                (aspect.type === 'progressed-to-progressed' &&
+                    ['SUN', 'MOON', 'MERCURY', 'VENUS', 'MARS'].includes(aspect.progressedPlanet));
+
             return isMajorAspect && isWithinOrb && isSignificant;
         });
     }

@@ -7,6 +7,11 @@ services:
         container_name: astro_charts_api
         ports:
             - '${ASTRO_API_PORT:-3000}:3000'
+        volumes:
+            - .:/usr/src/app
+            - ../dist:/usr/src/app/dist
+            - /usr/src/app/node_modules
+        command: npm run dev
         networks:
             - sail
 networks:

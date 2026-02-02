@@ -46,7 +46,7 @@ function getPlanetPosition(planetsData, planetName) {
 //     // filter data
 //     outputData.planets = filterPlanets(planets, planetsToFilter);    
 //     outputData.planets = processPlanets(outputData.planets, planetsToFilter);
-    
+
 //     outputData.cusps = processHouses(houses); 
 
 //     outputData.aspects = filterAspectsByPlanets(aspects, planetsToFilter);
@@ -121,7 +121,7 @@ function getPlanetPosition(planetsData, planetName) {
 //             // if (aspectName === 'conjunction'){
 //             //     return;
 //             // }
-            
+
 //             if (planet1 && planet2 && angle !== undefined && orb !== undefined) {
 //                 aspects.push({
 //                     point: {
@@ -148,36 +148,36 @@ function getPlanetPosition(planetsData, planetName) {
 // }
 
 function isCompatibleByElement(sign1, sign2) {
-  const groups = [
-    ['Aries', 'Leo', 'Sagittarius'],
-    ['Taurus', 'Virgo', 'Capricorn'],
-    ['Gemini', 'Libra', 'Aquarius'],
-    ['Cancer', 'Scorpio', 'Pisces']
-  ];
+    const groups = [
+        ['Aries', 'Leo', 'Sagittarius'],
+        ['Taurus', 'Virgo', 'Capricorn'],
+        ['Gemini', 'Libra', 'Aquarius'],
+        ['Cancer', 'Scorpio', 'Pisces']
+    ];
 
-  return groups.some(group =>
-    group.includes(sign1) && group.includes(sign2)
-  );
+    return groups.some(group =>
+        group.includes(sign1) && group.includes(sign2)
+    );
 }
 
 function isCompatibleByPolarity(sign1, sign2) {
-  const groups = [
-    ['Aries', 'Gemini', 'Leo', 'Libra', 'Sagittarius', 'Aquarius'], // Yang
-    ['Taurus', 'Cancer', 'Virgo', 'Scorpio', 'Capricorn', 'Pisces'], // Yin
-  ];
+    const groups = [
+        ['Aries', 'Gemini', 'Leo', 'Libra', 'Sagittarius', 'Aquarius'], // Yang
+        ['Taurus', 'Cancer', 'Virgo', 'Scorpio', 'Capricorn', 'Pisces'], // Yin
+    ];
 
-  return groups.some(group =>
-    group.includes(sign1) && group.includes(sign2)
-  );
+    return groups.some(group =>
+        group.includes(sign1) && group.includes(sign2)
+    );
 }
 
 
 
-function filterAspects(inputAspects, positions=[], considerAspectsCompatibility = true) {
-    const aspects = [];    
+function filterAspects(inputAspects, positions = [], considerAspectsCompatibility = true) {
+    const aspects = [];
     if (inputAspects && Array.isArray(inputAspects)) {
         inputAspects.forEach(aspect => {
-            
+
             if (!aspect.hasOwnProperty('aspect')) {
                 return;
             }
@@ -193,28 +193,28 @@ function filterAspects(inputAspects, positions=[], considerAspectsCompatibility 
             let sign2 = positions[planet2].sign;
 
             // ne ajunge conjunctia cu SNode
-            if (planet1 === 'NNode' && aspectName === 'opposition'){
+            if (planet1 === 'NNode' && aspectName === 'opposition') {
                 return;
             }
-            
-            if (considerAspectsCompatibility){
-                if (aspectName === 'square' && isCompatibleByElement(sign1, sign2)){
+
+            if (considerAspectsCompatibility) {
+                if (aspectName === 'square' && isCompatibleByElement(sign1, sign2)) {
                     return;
                 }
 
-                if (aspectName === 'trine' && !isCompatibleByElement(sign1, sign2)){
+                if (aspectName === 'trine' && !isCompatibleByElement(sign1, sign2)) {
                     return;
                 }
 
-                if (aspectName === 'sextile' && !isCompatibleByPolarity(sign1, sign2)){
+                if (aspectName === 'sextile' && !isCompatibleByPolarity(sign1, sign2)) {
                     return;
                 }
 
-                if (aspectName === 'conjunction' && sign1 !== sign2){
+                if (aspectName === 'conjunction' && sign1 !== sign2) {
                     return;
                 }
             }
-            
+
             if (planet1 && planet2 && angle !== undefined && orb !== undefined) {
                 aspects.push(aspect);
             }
@@ -248,9 +248,9 @@ function filterPlanets(planetsData, planetsToKeep) {
  * @param {string[]} planetsToKeep - Un array de nume de planete. Aspectele care implică aceste planete vor fi păstrate.
  * @returns {object[]} Un nou array conținând doar aspectele filtrate.
  */
-function filterAspectsByPlanets(aspectsData, planetsToKeep) {    
+function filterAspectsByPlanets(aspectsData, planetsToKeep) {
     // Creăm un Set pentru căutare rapidă
-    const planetsSet = new Set(planetsToKeep);    
+    const planetsSet = new Set(planetsToKeep);
 
     return aspectsData.filter(aspect => {
         // Verificăm dacă ambele planete ale aspectului sunt în Set-ul celor pe care vrem să le păstrăm

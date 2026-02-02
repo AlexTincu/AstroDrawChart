@@ -1,5 +1,5 @@
 const swisseph = require('swisseph');
-const { filterAspects } = require('./astrologyUtils');
+const { filterAspects } = require('./utils/astroUtils');
 
 
 /**
@@ -23,7 +23,7 @@ class AstrologicalCalculator {
             Uranus: swisseph.SE_URANUS,
             Neptune: swisseph.SE_NEPTUNE,
             Pluto: swisseph.SE_PLUTO,
-            NN: swisseph.SE_TRUE_NODE,
+            NNode: swisseph.SE_TRUE_NODE,
             Chiron: swisseph.SE_CHIRON,
             Lilith: swisseph.SE_MEAN_APOG, // Mean Black Moon Lilith
             // Vertex: swisseph.SE_VERTEX,
@@ -63,8 +63,8 @@ class AstrologicalCalculator {
             Mercury: { major: 1, minor: 0.5 },
             Venus: { major: 1, minor: 0.5 },
             Mars: { major: 1, minor: 0.5 },
-            NN: { major: 1, minor: 0.5 },
-            NS: { major: 1, minor: 0.5 },
+            NNode: { major: 1, minor: 0.5 },
+            SNode: { major: 1, minor: 0.5 },
             Chiron: { major: 1, minor: 0.5 },
             Lilith: { major: 1, minor: 0.5 }
         };
@@ -98,22 +98,20 @@ class AstrologicalCalculator {
         const { date, latitude, longitude } = birthData;
         const julianDay = this.dateToJulianDay(date);
         const houses = this.calculateHouses(julianDay, latitude, longitude);
-        let positions = this.calculatePlanetaryPositions(julianDay, houses.houses);
+        let planets = this.calculatePlanetaryPositions(julianDay, houses.houses);
 
         const { AS, MC } = houses.angles;
         let angles = { AS, MC };
-        const merged = { ...positions, ...angles };
 
         angles = this.addHouse(angles, houses.houses);
-        // console.log(angles);
 
-        let aspects = this.calculateNatalAspects(positions, angles);
-        aspects = filterAspects(aspects, merged, this.considerAspectsCompatibility);
+        let aspects = this.calculateNatalAspects(planets, angles);
+        aspects = filterAspects(aspects, { ...planets, ...angles }, this.considerAspectsCompatibility);
 
-        positions = this.addAnglesToPositions(positions, houses.angles, houses.houses);
+        planets = this.addAnglesToPositions(planets, houses.angles, houses.houses);
 
         return {
-            positions,
+            planets,
             houses: houses.houses,
             angles: houses.angles,
             aspects,
@@ -129,18 +127,17 @@ class AstrologicalCalculator {
     generateTransitsChart(transitData, houses, angles) {
         const { date, latitude, longitude } = transitData;
         const julianDay = this.dateToJulianDay(date);
-        const positions = this.calculatePlanetaryPositions(julianDay, houses);
+        const planets = this.calculatePlanetaryPositions(julianDay, houses);
 
         const { AS, MC } = angles;
         const filteredAngles = { AS, MC };
-        const merged = { ...positions, ...filteredAngles };
 
-        let aspects = this.calculateNatalAspects(positions, filteredAngles);
-        aspects = filterAspects(aspects, merged, this.considerAspectsCompatibility);
+        let aspects = this.calculateNatalAspects(planets, filteredAngles);
+        aspects = filterAspects(aspects, { ...planets, ...filteredAngles }, this.considerAspectsCompatibility);
 
         return {
             angles,
-            positions,
+            planets,
             houses,
             aspects,
             meta: {
@@ -186,7 +183,7 @@ class AstrologicalCalculator {
                 longitude: location.longitude
             });
 
-            solarReturnChart.positions = this.addHouse(solarReturnChart.positions, natalChart.houses, 'natal_house');
+            solarReturnChart.planets = this.addHouse(solarReturnChart.planets, natalChart.houses, 'natal_house');
             solarReturnChart.angles = this.addHouse(solarReturnChart.angles, natalChart.houses, 'natal_house');
 
             return {
@@ -382,12 +379,12 @@ class AstrologicalCalculator {
             }
         }
 
-        if (positions.NN) {
+        if (positions.NNode) {
             const southNode = this.calculateSouthNode(positions);
             if (southNode && houses) {
                 southNode.house = this.determinePlanetHouse(southNode.longitude, houses).number;
             }
-            positions.NS = southNode;
+            positions.SNode = southNode;
         }
 
         return positions;
@@ -440,7 +437,7 @@ class AstrologicalCalculator {
     }
 
     filterAspect(planet1, planet2, aspect) {
-        const valid = !((planet1 === 'NN' || planet2 === 'NN') && aspect.name === 'opposition');
+        const valid = !((planet1 === 'NNode' || planet2 === 'NNode') && aspect.name === 'opposition');
 
         return valid;
     }
@@ -770,12 +767,12 @@ class AstrologicalCalculator {
      * @returns {Object} South Node data.
      */
     calculateSouthNode(positions) {
-        if (!positions.NN) return null;
-        const southNodeLongitude = (positions.NN.longitude + 180) % 360;
+        if (!positions.NNode) return null;
+        const southNodeLongitude = (positions.NNode.longitude + 180) % 360;
         return {
-            ...positions.NN,
+            ...positions.NNode,
             longitude: southNodeLongitude,
-            longitudeSpeed: positions.NN.longitudeSpeed, // Same speed
+            longitudeSpeed: positions.NNode.longitudeSpeed, // Same speed
             sign: this.getZodiacSign(southNodeLongitude),
             degree: this.formatDegree(southNodeLongitude),
         };

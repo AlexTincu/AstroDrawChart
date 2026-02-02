@@ -1,4 +1,4 @@
-import type SVG from './svg';
+import type SVG from "./svg";
 export interface AspectData {
     degree: number;
     orbit: number;

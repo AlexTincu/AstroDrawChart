@@ -50,11 +50,9 @@ app.post("/natal", (req, res) => {
   } = settings;
 
   if (!date || latitude === undefined || longitude === undefined) {
-    return res
-      .status(400)
-      .json({
-        error: "Missing required parameters: date, latitude, longitude",
-      });
+    return res.status(400).json({
+      error: "Missing required parameters: date, latitude, longitude",
+    });
   }
 
   let response = {};
@@ -152,11 +150,9 @@ app.post("/upcoming_transit_natal", (req, res) => {
   } = req.body;
 
   if (!date || latitude === undefined || longitude === undefined) {
-    return res
-      .status(400)
-      .json({
-        error: "Missing required parameters: date, latitude, longitude",
-      });
+    return res.status(400).json({
+      error: "Missing required parameters: date, latitude, longitude",
+    });
   }
   try {
     const natalCalc = new AstrologicalCalculator(houseSystem);
@@ -300,28 +296,22 @@ app.post("/synastry", (req, res) => {
   const { house_system = "W" } = settings;
 
   if (!birth || birth === undefined) {
-    return res
-      .status(400)
-      .json({
-        error:
-          "Missing required parameters: birth with fields like date, latitude, longitude",
-      });
+    return res.status(400).json({
+      error:
+        "Missing required parameters: birth with fields like date, latitude, longitude",
+    });
   }
   if (!birth2 || birth2 === undefined) {
-    return res
-      .status(400)
-      .json({
-        error:
-          "Missing required parameters: birth2 with fields like date, latitude, longitude",
-      });
+    return res.status(400).json({
+      error:
+        "Missing required parameters: birth2 with fields like date, latitude, longitude",
+    });
   }
 
   if (!date || latitude === undefined || longitude === undefined) {
-    return res
-      .status(400)
-      .json({
-        error: "Missing required parameters: date, latitude, longitude",
-      });
+    return res.status(400).json({
+      error: "Missing required parameters: date, latitude, longitude",
+    });
   }
 
   if (
@@ -329,11 +319,9 @@ app.post("/synastry", (req, res) => {
     birth2.latitude === undefined ||
     birth2.longitude === undefined
   ) {
-    return res
-      .status(400)
-      .json({
-        error: "Missing required parameters: date, latitude, longitude",
-      });
+    return res.status(400).json({
+      error: "Missing required parameters: date, latitude, longitude",
+    });
   }
 
   try {
@@ -398,11 +386,9 @@ app.post("/progressed", (req, res) => {
   } = settings;
 
   if (!date || latitude === undefined || longitude === undefined) {
-    return res
-      .status(400)
-      .json({
-        error: "Missing required parameters: date, latitude, longitude",
-      });
+    return res.status(400).json({
+      error: "Missing required parameters: date, latitude, longitude",
+    });
   }
 
   try {

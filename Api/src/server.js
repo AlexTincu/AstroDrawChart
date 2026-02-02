@@ -19,7 +19,8 @@ app.use(
     origin: (origin, callback) => {
       const allowedOrigins = [
         "http://localhost:8089",
-        "https://astro-help.ro", // Adaugă domeniul tău aici
+        "https://astro-help.ro",
+        "https://astrohelps.com",
         "null", // Păstrează 'null' pentru anumite scenarii (ex. cereri din fișiere locale)
       ];
 
@@ -365,8 +366,8 @@ app.post("/synastry", (req, res) => {
     }
 
     res.json({
-      my_chart: natal1,
-      partner_chart: natal2,
+      personal_natal_chart: natal1,
+      partner_natal_chart: natal2,
       cross_aspects: cross_aspects,
       svg: svg,
     });
@@ -415,24 +416,9 @@ app.post("/progressed", (req, res) => {
       house_method,
     );
 
-    // Get major progressed aspects only
-    // const majorAspects = progressiveCalc.getMajorProgressedAspects(progressedChart.progression.aspects, 1.0);
-
     const response = {
       progressed_chart: progressedChart.chart,
       meta: progressedChart.meta,
-      // natal: natalChart,
-      // majorProgressedAspects: majorAspects,
-      // summary: {
-      //     totalProgressedAspects: progressedChart.progression.aspects.length,
-      //     majorProgressedAspects: majorAspects.length,
-      //     ageAtProgression: progressedChart.progressionData.age,
-      //     progressionPeriod: {
-      //         birthDate: progressedChart.progressionData.birthDate,
-      //         targetDate: progressedChart.progressionData.targetDate,
-      //         progressedDate: progressedChart.progressionData.progressedDate
-      //     }
-      // }
     };
 
     // Generate SVG and add it to the response

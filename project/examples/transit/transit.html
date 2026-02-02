@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var dataRadix = {
         planets: {
-          AS: [90],
+          AS: [95],
           MC: [333],
           Moon: [45.930008627285154],
           Venus: [263.2584780960899],
@@ -76,9 +76,9 @@
         COLOR_PISCES: "#42A5F5",
         DEBUG: false,
 
-        STROKE_ONLY: false,
+        // STROKE_ONLY: false,
         SYMBOL_SCALE: 1,
-        POINTS_TEXT_SIZE: 9,
+        // POINTS_TEXT_SIZE: 9,
         MARGIN: 40,
         MARGIN: 100,
         SHIFT_IN_DEGREES: 180,
@@ -100,9 +100,30 @@
         },
       };
 
+      const radixData = {
+        planets: {
+          AS: [95],
+          MC: [333],
+          Moon: [45.930008627285154],
+          Venus: [263.2584780960899],
+          Jupiter: [173.07043720306802],
+          NNode: [174.6895307834239],
+          Mars: [217.97167231451178],
+          Lilith: [196.19480722950317],
+          Saturn: [252.92341772675047],
+          Chiron: [348.1157239728284],
+          Uranus: [16.7900184974611],
+          Sun: [297.68062428797253],
+          Mercury: [289.10132025725494],
+          Neptune: [338.01899718442604],
+          Pluto: [285.6473452237151, -0.123],
+        },
+        cusps: [60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 0, 30],
+      };
+
       window.onload = function () {
         var chart = new astrochart.Chart("paper", 800, 800, settings);
-        var radix = chart.radix(dataRadix);
+        var radix = chart.radix(radixData);
         radix.aspects();
 
         // Aspect calculation

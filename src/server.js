@@ -119,8 +119,6 @@ app.post("/natal", (req, res) => {
         };
       }
 
-      console.log("dataRadix", dataRadix);
-      console.log("dataTransits", dataTransits);
       svg = generateChartSVG(dataRadix, dataTransits);
     } catch (svgErr) {
       console.error("Failed to generate SVG:", svgErr);
